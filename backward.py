@@ -193,33 +193,3 @@ def compute_RMSE_at_t(p, q, t, batch_size=10, state_size=1):
 
   rmse = tf.sqrt(tf.reduce_mean(tf.square(tf.to_float(T - t))))
   return rmse
-# def compute_RMSE_at_t(p, q, t, batch_size=10, state_size=1):
-#   # get a batch of uncensored data
-#   xs, fs, lens, _ = get_forward_process_dataset(state_size=state_size, 
-#                                                 batch_size=batch_size,
-#                                                 censor=False)
-#   mask = lens > t
-#   xs = tf.boolean_mask(xs, mask)
-#   fs = tf.boolean_mask(fs, mask)
-#   lens = tf.boolean_mask(lens, mask)
-#   batch_size = tf.shape(lens)[0]
-  
-#   trunc_lens = lens - t
-#   trunc_max_len = tf.reduce_max(trunc_lens)
-#   trunc_xs = xs[:,:trunc_max_len,:]
-#   log_q_z, zs = q.sample(batch_size=batch_size,
-#                          xs=trunc_xs,
-#                          lens=trunc_lens)
-
-#   print_op = tf.print([p.drift, p.W_f, p.b_f], summarize=-1)
-#   # Pull out the final zs to condition the model on.
-#   # zs is [batch_size, time, state_dim]
-#   # trunc_lens is [batch_size] inds in [0,trunc_max_len]
-#   with tf.control_dependencies([print_op]):
-#     r = tf.range(0, batch_size)
-#     inds = tf.stack([r,trunc_lens-1], axis=-1)
-#     final_zs = tf.gather_nd(zs, inds)
-
-#   _,_,_, pred_lens = p.sample(batch_size=batch_size, z0=final_zs, max_length=50)
-#   rmse = tf.sqrt(tf.reduce_mean(tf.square(tf.to_float(pred_lens - t))))
-#   return rmse
